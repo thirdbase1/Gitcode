@@ -1,9 +1,9 @@
-import { MainLayout } from "@/components/layout/main-layout";
+import { AppShell } from "@/components/layout/app-shell";
 
 export default function Home() {
   return (
     <main className="h-screen w-screen overflow-hidden">
-      <MainLayout />
+      <AppShell />
     </main>
   );
 }

@@ -1,7 +1,8 @@
 "use client";
 
 import React from "react";
-import { Folder, ChevronRight, Search } from "lucide-react";
+import { Folder, ChevronRight, Search, FileCode } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 export function RightPanel() {
   return (
@@ -27,7 +28,8 @@ export function RightPanel() {
         </div>
       </div>
 
-      <div className="h-1/3 border-t border-zinc-900/50 bg-zinc-950/20">
+      {/* Hidden on small heights (mobile) or just keep it simple */}
+      <div className="h-1/3 border-t border-zinc-900/50 bg-zinc-950/20 min-h-[120px]">
         <div className="h-8 border-b border-zinc-900/50 flex items-center px-3">
           <span className="text-[9px] font-mono tracking-[0.2em] text-zinc-500 uppercase">Git State</span>
         </div>
@@ -77,6 +79,3 @@ function FileItem({ label, active = false }: { label: string, active?: boolean }
     </div>
   );
 }
-
-import { cn } from "@/lib/utils";
-import { FileCode } from "lucide-react";
