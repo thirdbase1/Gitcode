@@ -14,3 +14,22 @@
 - **Editor**: Monaco Editor
 - **Terminal**: xterm.js
 - **UI Primitives**: Radix UI, Lucide React
+
+## Backend Architecture
+- **FastAPI (Python)**: Handles AI orchestration, workspace lifecycle, and websocket management.
+- **Go Bridge**: Manages PTY sessions, terminal streams, and realtime execution monitoring.
+- **Vercel Sandbox SDK (@beta)**: Provides isolated Linux MicroVMs with persistent filesystem state.
+- **Neon Database**: Serverless PostgreSQL for persisting workspace and execution history.
+- **Redis**: High-speed event bus for realtime execution streaming.
+
+### Backend Setup
+```bash
+# Install Python dependencies
+cd backend/python
+python3 -m venv venv
+source venv/bin/activate
+pip install -r requirements.txt
+
+# Start services
+./start_backend.sh
+```
