@@ -26,3 +26,4 @@ vercel==0.5.8
 vercel-sandbox==0.1.0
 vercel-workers==0.0.22
 websockets==16.0
+openai

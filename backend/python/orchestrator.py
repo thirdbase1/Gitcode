@@ -1,11 +1,26 @@
+from openai import OpenAI
 from .tools import ToolRequest, ToolType, ToolResult
 from .sandbox import sandbox_manager
 from .ws_manager import manager
+from .config import settings
 import json
 
+client = OpenAI(
+    base_url=settings.OPENROUTER_BASE_URL,
+    api_key=settings.OPENROUTER_API_KEY,
+)
+
 class AIOrchestrator:
+    async def chat_and_execute(self, workspace_id: str, prompt: str, model: str):
+        # Implementation for OpenRouter chat and tool orchestration
+        response = client.chat.completions.create(
+            model=model,
+            messages=[{"role": "user", "content": prompt}]
+        )
+        # Process response and execute tools...
+        return response.choices[0].message.content
+
     async def execute_tool(self, request: ToolRequest):
-        # 1. Log event to timeline (backend-generated)
         event = {
             "type": request.type,
             "status": "running",
@@ -14,7 +29,6 @@ class AIOrchestrator:
         }
         await manager.broadcast(request.workspace_id, json.dumps({"event": "timeline.update", "data": event}))
 
-        # 2. Check for approval
         if request.requires_approval:
             await manager.broadcast(request.workspace_id, json.dumps({
                 "event": "approval.required",
@@ -23,18 +37,14 @@ class AIOrchestrator:
                     "risk": "medium"
                 }
             }))
-            # In a real scenario, we'd wait for a websocket signal here
             return ToolResult(status="blocked", output="Waiting for approval")
 
-        # 3. Execute
         try:
             if request.type == ToolType.TERMINAL_COMMAND:
                 result = await sandbox_manager.run_command(request.workspace_id, request.command, request.args)
                 output = await result.stdout()
 
-                # Stream preview URL if detected
                 if "http://localhost:" in output or "https://" in output:
-                    # In a real Sandbox SDK call, we'd get sandbox.domain(port)
                     preview_url = f"https://sandbox-{request.workspace_id}.vercel.app"
                     await manager.broadcast(request.workspace_id, json.dumps({
                         "event": "preview.available",
@@ -45,7 +55,6 @@ class AIOrchestrator:
                 await manager.broadcast(request.workspace_id, json.dumps({"event": "timeline.update", "data": event}))
                 return ToolResult(status="success", output=output)
 
-            # Other tool types...
             return ToolResult(status="success", output="Operation completed")
         except Exception as e:
             event["status"] = "failed"

@@ -33,3 +33,10 @@ pip install -r requirements.txt
 # Start services
 ./start_backend.sh
 ```
+
+## Configuration
+Copy `.env.example` to `.env` and provide the following:
+- **Vercel**: `VERCEL_TOKEN`, `VERCEL_TEAM_ID`, `VERCEL_PROJECT_ID` (Obtain from Vercel Dashboard/Settings).
+- **Neon**: `DATABASE_URL` (Obtain from Neon Console).
+- **Redis**: `REDIS_URL` (e.g., Upstash or local Redis).
+- **GitHub**: `GIT_ACCESS_TOKEN` (Optional, for private repository access).
